@@ -89,3 +89,11 @@ Create a `.env` file in the frontend directory if you need to customize:
 VITE_API_URL=http://localhost:8000
 ```
 
+
+
+
+
+
+
+
+

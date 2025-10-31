@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import api from '@/services/api';
 import toast from 'react-hot-toast';
 
 interface User {
@@ -47,6 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
       // Set default authorization header
+      api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
       axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
     }
     setIsLoading(false);
@@ -54,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/login', {
+      const response = await api.post('/auth/login', {
         email,
         password,
       });
@@ -69,6 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(userData);
 
       // Set default authorization header
+      api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
 
       toast.success('Login successful!');
@@ -88,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     role: string = 'staff'
   ) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/register', {
+      const response = await api.post('/auth/register', {
         username,
         email,
         password,
@@ -106,6 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(userData);
 
       // Set default authorization header
+      api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
 
       toast.success('Registration successful!');
@@ -128,6 +132,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
 
     // Remove authorization header
+    delete api.defaults.headers.common['Authorization'];
     delete axios.defaults.headers.common['Authorization'];
 
     toast.success('Logged out successfully');
